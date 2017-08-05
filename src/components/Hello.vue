@@ -1,44 +1,84 @@
 <template>
-  <div class="hello">
-  <Button>ASD</Button>
-  <Cell>CVB</Cell>
+  <div :id="mapId" class="l-map" :style="{width,height}">
   </div>
 </template>
 
 <script>
-import { Button, Cell } from 'mint-ui';
+import 'leaflet/dist/leaflet.css'
+
+import util from "@/libs/utils"
+import LUtil from "@/libs/leafletUtils"
+
 
 export default {
-  name: 'hello',
+
+  name: 'LEditorMap',
+
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App'
+      mapId:'Map_'+util.randomString(6),
+      map:{},
+      options:{
+          preferCanvas: true, //优先使用canvas 绘画 地图
+          zoomControl: false, //缩放控件
+          attributionControl: false, //右下角角标
+          maxZoom: 24,
+          dragging: true,
+          zoom: 14,
+          nativeZoom:18,
+          scrollWheelZoom: true,
+          selecFinish:false        
+      }
+    };
+  },
+  props:{
+    width: {
+      type: String,
+      default: "800px"
+    },
+    height: {
+      type: String,
+      default: "500px"
+    },
+    editeZoom:{
+      default:13
     }
   },
-  components:{
-    Button,
-    Cell
+  mounted(){
+    console.log(LUtil);
+    this.map=LUtil.createMap(this.mapId,{...this.options,editable: true});
+    this.$emit("mapInitEnd");
+
+    var _this=this;
+
+    this.map.on("click",function(e){
+      console.log(e);
+      LUtil.addCircle(_this.map,[e.latlng.lat,e.latlng.lng]);
+    });
+    console.log(eviltransform);
+    this.map.panTo(eviltransform.wgs2gcj(30.671021,104.073076));
+  },
+  beforeDestroy(){
+    this.map.remove();
+  },  
+  methods:{
   }
-}
+};
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-h1, h2 {
-  font-weight: normal;
-}
+<style type="text/css">
+  .leaflet-middle-icon{
+    opacity: 0.8;
+    width: 8px;
+    height: 8px;
+  }
 
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-
-a {
-  color: #42b983;
-}
+  .leaflet-vertex-icon,.leaflet-middle-icon{
+    border-radius: 20px;
+    border: 3px solid #20a0ff;
+    background-color: white;
+    width: 15px;
+    height: 15px;
+  }
+  
 </style>

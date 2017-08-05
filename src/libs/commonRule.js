@@ -1,0 +1,51 @@
+/*云子数据预警范围*/
+
+export const devDataWarningLimit=[
+	{
+		key:'co2',
+		max:49000,
+		min:200
+	},
+	{
+		key:"soil_temperature",
+		max:40,
+		min:0
+	},
+	{
+		key:"air_temperature",
+		max:40,
+		min:0
+	},
+	{
+		key:"lux",
+		max:150000,
+		min:1
+	},
+	{
+		key:"soil_moisture",
+		max:99,
+		min:10
+	},
+	{
+		key:"humidity",
+		max:99,
+		min:10
+	},
+	{
+		key:"wind_speed",
+		type:"single",
+		max:24,
+		min:0
+	},
+	{
+		key:"pressure",
+		max:1200,
+		min:800
+	},
+	{
+		key:"rain_hourly",
+		type:"single",
+		max:100,
+		min:0
+	}
+];
