@@ -1,7 +1,7 @@
 <template>
 	<div class="l-map-mobile-wrap">
 		<div :id="mapId" class="l-map choose-field">
-			<div id="addPoint" v-show="painterState!=1" class="hover-botton" ></div>
+			<div id="addPoint" v-show="painterState!=1" @click="addFieldPoint" class="hover-botton" ></div>
 		</div>	
 	</div>
 </template>
@@ -31,7 +31,9 @@ export default {
     	nowPoint:null,
     	/*当前土地多边形 实例*/
     	polygon:null,
-      vrPoint:null
+      vrPoint:null,
+      bouds:[]
+
     };
   },
   props:{
@@ -82,27 +84,32 @@ export default {
 
       this.map = this.createMap(this.mapId);
 
-      // this.map.on("move", () => {
-      //   if (this.painterState == 0) {
-      //     this.addDashedLine();
-      //   }
-      // });
-      // 
 
-        var bouds = [];
-        this.map.on("click", (e)=>{
-            // bouds.push(e.latlng);
-            // if (bouds.length == 3) {
-            //     L.polygon(bouds).addTo(this.map);
-            //     bouds = [];
-            // }
-            this.addFieldPoint();
-        });
+
+        // var bouds = [];
+        // this.map.on("click", (e)=>{
+        //     bouds.push(e.latlng);
+        //     if (bouds.length == 3) {
+        //         L.polygon(bouds).addTo(this.map);
+        //         bouds = [];
+        //     }
+        // });
 
     },
   	addFieldPoint(){
-  		return new Promise((ok,fail)=>{
 		  	var newPointPos=this.getWillPointLatLang();
+
+            this.bouds.push([newPointPos.lat,newPointPos.lng]);
+
+
+        //     if (this.bouds.length == 3) {
+        //         L.polygon(this.bouds).addTo(this.map);
+        //         this.bouds = [];
+        //     }
+
+        // return ;
+
+
 	  		var line=null;
         /*判断属否可以圈地*/
         if(this.painterState==-1){
@@ -111,12 +118,16 @@ export default {
           return;
         }
 
+        console.log(this.pointQuene.length);
 
 	  		/*判断圈地是否结束*/
-	  		if(this.pointQuene.length>2&&this.isFinish(newPointPos,this.pointQuene[0].latlngPos)){
+        if(this.pointQuene.length>2&&this.isFinish(newPointPos,this.pointQuene[0].latlngPos)){
+	  		// if(this.pointQuene.length>3){
 
           // this.reset();
           // this.clearPrePoint();
+
+          L.polygon(this.bouds).addTo(this.map);
 
           console.log("结束圈地");
           
@@ -158,9 +169,6 @@ export default {
 	    		/*点对应的线条实例，第一个点没有线条实例*/
 	    		line:line  			
 	  		});
-
-	  		ok();
-  		})
   	},
     addDashedLine() {
       if (this.pointQuene.length < 1) {
@@ -188,7 +196,8 @@ export default {
 	  		x:(pos.left+pos.right)/2,
 	  		y:(pos.top+pos.bottom)/2
 	  	}  		
-  		return this.map.containerPointToLatLng(domCenter);  		
+
+  		return this.map.containerPointToLatLng(domCenter); 		
   	},
   	/*撤销功能*/
   	clearPrePoint(){
@@ -205,8 +214,6 @@ export default {
   	isFinish(pos1,pos2){
   		var pos1Px=this.map.latLngToContainerPoint(pos1);
   		var pos2Px=this.map.latLngToContainerPoint(pos2);
-
-
   		var distance=pos1Px.distanceTo(pos2Px);
   		if(distance<30){
   			return true;
@@ -216,9 +223,19 @@ export default {
   	},
   	/*生成可编辑的土地多边形*/
   	createField(){
+      var tempB=this.getFieldBouds();
+      // L.polygon(tempB).addTo(this.map);
+      L.polygon([[18.145851771694467,3.7207026779651646],[24.5271348225978,20.478515625000004],[10.94838103346043,12.685545086860659]]).addTo(this.map);
+      for(var i in tempB ){
+        tempB[i][0]+=1;
+        tempB[i][1]+=2;
+      }
 
-      console.log(this.getFieldBouds());
-        var handle=this.addPolygon(this.map,this.getFieldBouds());
+      tempB=[].concat(tempB);
+      L.polygon(tempB,{
+        color:'red'
+      }).addTo(this.map);
+
   	},
   	/*回显土地*/
   	showField(){
