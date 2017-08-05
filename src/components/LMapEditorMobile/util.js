@@ -101,7 +101,7 @@ export const addPolygon = function(map, latlngs, options) {
 		fill: true,
 		fillColor: "red",
 		fillOpacity: 1,
-	}, options);
+	}, options || {});
 
 	var handle = L.polygon(latlngs, _opt).addTo(map);
 

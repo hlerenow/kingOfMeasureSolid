@@ -1,7 +1,7 @@
 <template>
 	<div class="l-map-mobile-wrap">
 		<div :id="mapId" class="l-map choose-field">
-			<div id="addPoint" v-show="painterState!=1" class="hover-botton" @click="addFieldPoint"></div>
+			<div id="addPoint" v-show="painterState!=1" class="hover-botton" ></div>
 		</div>	
 	</div>
 </template>
@@ -60,6 +60,7 @@ export default {
   mounted(){
     if(this.visable){
       this.initMap();
+
     }
   },
   methods:{
@@ -81,11 +82,23 @@ export default {
 
       this.map = this.createMap(this.mapId);
 
-      this.map.on("move", () => {
-        if (this.painterState == 0) {
-          this.addDashedLine();
-        }
-      });
+      // this.map.on("move", () => {
+      //   if (this.painterState == 0) {
+      //     this.addDashedLine();
+      //   }
+      // });
+      // 
+
+        var bouds = [];
+        this.map.on("click", (e)=>{
+            // bouds.push(e.latlng);
+            // if (bouds.length == 3) {
+            //     L.polygon(bouds).addTo(this.map);
+            //     bouds = [];
+            // }
+            this.addFieldPoint();
+        });
+
     },
   	addFieldPoint(){
   		return new Promise((ok,fail)=>{
@@ -100,23 +113,27 @@ export default {
 
 
 	  		/*判断圈地是否结束*/
-	  		if(this.pointQuene.length>1&&this.isFinish(newPointPos,this.pointQuene[0].latlngPos)){
+	  		if(this.pointQuene.length>2&&this.isFinish(newPointPos,this.pointQuene[0].latlngPos)){
 
           // this.reset();
           // this.clearPrePoint();
 
           console.log("结束圈地");
+          
           this.$emit("finish",this.getFieldBouds());
           /*改变 绘画状态*/
           this.painterState=1;
           /*移除虚拟点*/
-          if(this.vrPoint.remove){
+          if(this.vrPoint){
             this.vrPoint.remove();
           }
+
+
           /*移除所有的绘画中的点*/
           this.clearAllPoint();
           /*创建可编辑的土地*/
           this.createField();
+
 
 	  			return;
 	  		}
@@ -200,7 +217,7 @@ export default {
   	/*生成可编辑的土地多边形*/
   	createField(){
 
-      // console.log(this.getFieldBouds());
+      console.log(this.getFieldBouds());
         var handle=this.addPolygon(this.map,this.getFieldBouds());
   	},
   	/*回显土地*/
