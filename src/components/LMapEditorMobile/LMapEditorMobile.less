@@ -14,9 +14,9 @@
 			height:3.0rem;
 			position: absolute;
 			z-index: 999;
-			bottom:5.0rem;
 			left: 50%;
-			transform:translateX(-50%);
+			top:50%;
+			transform:translateX(-50%) ranslateY(-50%);
 			border-radius: 100%;
 			background-color: rgba(3,169,244,0.7);
 
@@ -31,7 +31,7 @@
 				left:50%;
 				top:50%;
 				transform:translateX(-50%) translateY(-50%);
-				// animation:wave 1s infinite; 
+				animation:wave 1s infinite; 
 			}
 			&:after{
 				color:black;
@@ -46,6 +46,18 @@
 				top:50%;
 				transform:translateX(-50%) translateY(-50%);
 			}			
+		}
+
+		#add-point-btn{
+			z-index: 999;
+			width:100px;
+			height:100px;
+			background-color:red;
+			position:absolute;
+			left: 50%;
+			bottom:1.0rem;
+			transform:translateX(-50%);
+
 		}
 	}
 }
