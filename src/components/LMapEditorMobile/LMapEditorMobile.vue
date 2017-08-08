@@ -55,6 +55,7 @@ export default {
     visable:function(val){
       if(val){
         if(!this.initOk){
+          console.log(this.initOk);
            this.initMap();
            this.initOk=true;
         }
@@ -64,7 +65,10 @@ export default {
   mounted(){
     if(this.visable){
       this.initMap();
-
+      /*回显完成*/
+      if(this.visable){
+        this.initOk=true;
+      }
     }
   },
   methods:{
@@ -87,7 +91,6 @@ export default {
   	addFieldPoint(){
 		  	var newPointPos=this.getWillPointLatLang();
 
-            this.bouds.push([newPointPos.lat,newPointPos.lng]);
 
 	  		var line=null;
         /*判断属否可以圈地*/
@@ -101,7 +104,7 @@ export default {
         if(this.pointQuene.length>2&&this.isFinish(newPointPos,this.pointQuene[0].latlngPos)){
           console.log("结束圈地");
           
-          this.$emit("finish",this.getFieldBouds());
+          this.$emit("finish",this.bouds);
           /*改变 绘画状态*/
           this.painterState=1;
           /*移除虚拟点*/
@@ -119,6 +122,7 @@ export default {
 	  			return;
 	  		}
 
+
 	  		if(this.pointQuene.length>0){
 					line = this.addLine(this.map, this.pointQuene[this.pointQuene.length - 1].latlngPos, newPointPos);
 	  		}
@@ -132,6 +136,10 @@ export default {
           color:'#20a0ff'
 				});
 
+
+        /*添加记录过程中的点*/
+        this.bouds.push([newPointPos.lat,newPointPos.lng]);
+        /*这个变量储存的值，leaflet移动端 填充 多边形 路劲 会 有问题，*/
 	  		this.pointQuene.push({
 	    		/*点的实例*/
 	    		point:point,
@@ -163,8 +171,8 @@ export default {
   	getWillPointLatLang(){
 	  	var pos=this.addPointDom.getBoundingClientRect();
 	  	var domCenter={
-	  		x:(pos.left+pos.right)/2,
-	  		y:(pos.top+pos.bottom)/2
+	  		x:(pos.left+pos.right)/2-4,
+	  		y:(pos.top+pos.bottom)/2-4
 	  	}  		
 
   		return this.map.containerPointToLatLng(domCenter); 		
@@ -198,7 +206,7 @@ export default {
 
       tempB=[].concat(tempB);
 
-      L.polygon(this.bouds,{
+      this.ploygon=L.polygon(this.bouds,{
         color:'red'
       }).addTo(this.map);
   	},
