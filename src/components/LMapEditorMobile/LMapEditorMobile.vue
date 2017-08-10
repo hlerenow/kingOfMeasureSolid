@@ -207,7 +207,12 @@ export default {
       tempB=[].concat(tempB);
 
       this.ploygon=L.polygon(this.bouds,{
-        color:'red'
+        color: "red",
+        opacity: 0.5,
+        weight: 0.1,
+        fill: true,
+        fillColor: "red",
+        fillOpacity: 0.2,
       }).addTo(this.map);
   	},
   	/*回显土地*/

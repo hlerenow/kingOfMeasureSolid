@@ -13,4 +13,4 @@ new Vue({
 	components: {
 		'app': App
 	}
-})
+});

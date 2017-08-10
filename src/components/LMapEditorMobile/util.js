@@ -88,7 +88,6 @@ export const addLine = function(map, pos1, pos2, options) {
 }
 
 
-
 /*画一个多边形*/
 export const addPolygon = function(map, latlngs, options) {
 
@@ -96,11 +95,11 @@ export const addPolygon = function(map, latlngs, options) {
 
 	var _opt = Object.assign({
 		color: "red",
-		opacity: 1,
-		weight: 1,
-		fill: true,
+		opacity: 0.5,
+		weight: 0.1,
+		// fill: true,
 		fillColor: "red",
-		fillOpacity: 1,
+		// fillOpacity: 1,
 	}, options || {});
 
 	var handle = L.polygon(latlngs, _opt).addTo(map);
