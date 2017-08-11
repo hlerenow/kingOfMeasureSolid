@@ -87,27 +87,45 @@ export const addLine = function(map, pos1, pos2, options) {
 	return line;
 }
 
-
 /*画一个多边形*/
 export const addPolygon = function(map, latlngs, options) {
 
 	var latlngs = latlngs;
 
 	var _opt = Object.assign({
-		color: "red",
-		opacity: 0.5,
-		weight: 0.1,
-		// fill: true,
-		fillColor: "red",
-		// fillOpacity: 1,
+		color: "white",
+		opacity: 1,
+		weight: 1,
+		fill: true,
+		fillColor: "green",
+		fillOpacity: 0.5,
 	}, options || {});
 
 	var handle = L.polygon(latlngs, _opt).addTo(map);
-
+	this.map.fitBounds(handle.getBounds());
 	return handle;
 }
 
 export const getComutedStyle = function(el) {
 	var style = window.getComputedStyle ? window.getComputedStyle(el, null) : el.currentStyle;
 	return style;
+}
+
+export const calculateArea = function(latLngs) {
+	var pointsCount = latLngs.length,
+		area = 0.0,
+		d2r = Math.PI / 180,
+		p1, p2;
+
+	if (pointsCount > 2) {
+		for (var i = 0; i < pointsCount; i++) {
+			p1 = latLngs[i];
+			p2 = latLngs[(i + 1) % pointsCount];
+			area += ((p2[1] - p1[1]) * d2r) *
+				(2 + Math.sin(p1[0] * d2r) + Math.sin(p2[0] * d2r));
+		}
+		area = area * 6378137.0 * 6378137.0 / 2.0;
+	}
+
+	return Math.abs(area);
 }

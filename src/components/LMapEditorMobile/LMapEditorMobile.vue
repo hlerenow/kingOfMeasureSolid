@@ -1,18 +1,28 @@
 <template>
 	<div class="l-map-mobile-wrap">
-		<div :id="mapId" class="l-map choose-field">
+    <choose-field-page :visable="painterState==1" ></choose-field-page>
+    <mt-header  v-show="painterState==0" title="圈地中..." class="header">
+        <template slot="left">
+          <div id="come-back" @click="clearPrePoint" class="tool">撤销</div>
+        </template>
+        <template slot="right">
+          <div id="finish" class="tool" @click="chooseFieldFinish">完成</div>
+        </template>
+    </mt-header>  
+    <div :id="mapId" class="l-map choose-field">
       <div id="add-point" v-show="painterState!=1" class="hover-botton"></div>
 			<div id="add-point-btn" v-show="painterState!=1" @click="addFieldPoint"  ></div>
 		</div>	
 	</div>
 </template>
-
 <script>
 
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
 import * as util from "./util"
-
+import chooseFieldPage from "components/chooseFieldPage/chooseFieldPage"
+import {Button,Header} from "mint-ui"
+// import eviltransform from "eviltransform"
 
 export default {
 
@@ -25,7 +35,7 @@ export default {
     	painterState:-1,//-1  可以圈地 ，0 圈地中 ， 1 圈地结束
     	map:null,
     	/*是否进如选地状态*/
-    	drawStart:false,
+    	drawStart:false, 
     	/*当前土地的*/
     	pointQuene:[],
     	/*当前点实例*/
@@ -34,9 +44,14 @@ export default {
     	polygon:null,
       vrPoint:null,
       /*解决颜色填充不了bug，*/
-      bouds:[]
+      bounds:[]
 
     };
+  },
+  components:{
+    mtButton:Button,
+    [Header.name]:Header,
+    chooseFieldPage
   },
   props:{
   	fields:{
@@ -74,6 +89,12 @@ export default {
   methods:{
   	...util,
     initMap(){
+      /*注册事件 */
+
+      this.$bus.$on("reChoose",()=>{
+        this.reset();
+      });
+
       if(this.map){
         this.map.remove();
       }
@@ -87,11 +108,11 @@ export default {
           this.addDashedLine();
         }
       });
+
+      this.localtion();
     },
   	addFieldPoint(){
 		  	var newPointPos=this.getWillPointLatLang();
-
-
 	  		var line=null;
         /*判断属否可以圈地*/
         if(this.painterState==-1){
@@ -103,22 +124,7 @@ export default {
 	  		/*判断圈地是否结束*/
         if(this.pointQuene.length>2&&this.isFinish(newPointPos,this.pointQuene[0].latlngPos)){
           console.log("结束圈地");
-          
-          this.$emit("finish",this.bouds);
-          /*改变 绘画状态*/
-          this.painterState=1;
-          /*移除虚拟点*/
-          if(this.vrPoint){
-            this.vrPoint.remove();
-          }
-
-
-          /*移除所有的绘画中的点*/
-          this.clearAllPoint();
-
-
-          /*创建可编辑的土地*/
-          this.createField();
+          this.chooseFieldFinish();
 	  			return;
 	  		}
 
@@ -138,7 +144,7 @@ export default {
 
 
         /*添加记录过程中的点*/
-        this.bouds.push([newPointPos.lat,newPointPos.lng]);
+        this.bounds.push([newPointPos.lat,newPointPos.lng]);
         /*这个变量储存的值，leaflet移动端 填充 多边形 路劲 会 有问题，*/
 	  		this.pointQuene.push({
 	    		/*点的实例*/
@@ -148,6 +154,28 @@ export default {
 	    		line:line  			
 	  		});
   	},
+    chooseFieldFinish(){
+        /*点不能少于3个*/
+        if(this.bounds.length<3){
+          return;
+        }
+
+        this.$bus.$emit("finish",this.bounds);
+        /*改变 绘画状态*/
+        this.painterState=1;
+        /*移除虚拟点*/
+        if(this.vrPoint){
+          this.vrPoint.remove();
+        }
+
+
+        /*移除所有的绘画中的点*/
+        this.clearAllPoint();
+
+
+        /*创建可编辑的土地*/
+        this.createField();
+    },
     addDashedLine() {
       if (this.pointQuene.length < 1) {
         return;
@@ -179,8 +207,20 @@ export default {
   	},
   	/*撤销功能*/
   	clearPrePoint(){
+      /*在绘画过程中才可以撤销*/
+      if(this.painterState!=0){
+        return;
+      }
+
       var point=this.pointQuene.pop();
-      this.addDashedLine();
+          this.bounds.pop();
+      if(this.pointQuene.length!=0){
+        this.addDashedLine();
+      }else{
+        this.clearAllPoint();
+        this.painterState=-1;
+      }
+
       if(point){
         point.point.remove();
         if(point.line){
@@ -202,18 +242,12 @@ export default {
   	},
   	/*生成可编辑的土地多边形*/
   	createField(){
-      var tempB=this.getFieldBouds();
+      var tempB=this.getFieldBounds();
 
       tempB=[].concat(tempB);
 
-      this.ploygon=L.polygon(this.bouds,{
-        color: "red",
-        opacity: 0.5,
-        weight: 0.1,
-        fill: true,
-        fillColor: "red",
-        fillOpacity: 0.2,
-      }).addTo(this.map);
+      this.ploygon=this.addPolygon(this.map,this.bounds,{
+      });
   	},
   	/*回显土地*/
   	showField(){
@@ -222,7 +256,7 @@ export default {
         this.addPolygon(this.map,showField[i].bounds);
       }
   	},
-    getFieldBouds(){
+    getFieldBounds(){
       var res=[];
       var pointQuene=this.pointQuene;
 
@@ -253,12 +287,41 @@ export default {
     },
     /*重置圈地小工具,回到初始化的编辑状态*/
     reset(){
+      if(this.ploygon){
+        this.ploygon.remove();
+      }
+
       this.clearAllPoint();
       this.drawStart=false;
       this.pointQuene=[];
+      this.painterState=-1;
+      this.bounds=[];
       this.nowPoint=null;
       this.polygon=null;
       this.vrPoint=null;    
+    },
+    localtion(){  
+      var _this=this;
+      // var geolocation = new BMap.Geolocation();
+      // geolocation.getCucrrentPosition(function(r) {
+      //   if (this.getStatus() == BMAP_STATUS_SUCCESS) {
+
+      //     var pos = eviltransform.bd2gcj(r.point.lat, r.point.lng);
+      //     console.log(r.point,pos)
+
+      //     _this.map.panTo(pos);
+      //   } else {}
+      // }, {
+      //   enableHighAccuracy: true
+      // })
+
+      var nowCity=new BMap.LocalCity();
+
+      nowCity.get((obj)=>{
+        var pos=eviltransform.bd2gcj(obj.center.lat, obj.center.lng);
+        this.map.panTo(pos);
+        this.map.setZoom(10);
+      });       
     }
 
   },
@@ -269,6 +332,7 @@ export default {
 <style lang="less" scoped>
 	@import url('LMapEditorMobile.less');
 </style>
+
 <style type="text/css">
   .leaflet-middle-icon{
     opacity: 0.8;
@@ -282,5 +346,14 @@ export default {
     background-color: white;
     width: 15px;
     height: 15px;
+  }
+
+  .header{
+    /*background-color: white;*/
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    z-index: 999;
   }
 </style>

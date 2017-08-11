@@ -36,7 +36,10 @@ export default {
   watch:{
   	visable:function(val){
       this.initMap(val);
-  	}
+  	},
+    fields:function(){
+      this.showAllField();
+    }
   },
   mounted(){
       this.initMap(this.visable);
@@ -49,7 +52,13 @@ export default {
     initMap(val){
       if(val){
         this.$nextTick(()=>{
-          this.map=this.createMap(this.mapId);
+          this.map=this.createMap(this.mapId,{
+            dragging:false,
+            doubleClickZoom:false,
+            preferCanvas:true,
+            tap:false,
+            touchZoom:false
+          });
           this.showAllField();
 
         });
@@ -82,7 +91,7 @@ export default {
 
 <style lang="css" scoped>
 .show-field,.wrap{
-	width: 300px;
-	height: 300px;
+	width: 100%;
+	height: 100%;
 }
 </style>
