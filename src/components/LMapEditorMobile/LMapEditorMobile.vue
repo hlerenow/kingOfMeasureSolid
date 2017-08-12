@@ -43,7 +43,7 @@ export default {
     	/*当前土地多边形 实例*/
     	polygon:null,
       vrPoint:null,
-      /*解决颜色填充不了bug，*/
+      /*解决颜色填充不了bug*/
       bounds:[]
 
     };
@@ -105,7 +105,7 @@ export default {
 
       this.map.on("move",(e)=>{
         if(this.painterState==0){
-          this.addDashedLine();
+          // this.addDashedLine();
         }
       });
 
