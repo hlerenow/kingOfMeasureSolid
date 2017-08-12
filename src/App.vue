@@ -41,7 +41,7 @@ export default {
   name: 'app',
   data(){
     return {
-      active:"tab2",
+      active:"tab1",
       chooseAllFields:[],
     }
   },

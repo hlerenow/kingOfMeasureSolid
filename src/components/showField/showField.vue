@@ -38,7 +38,8 @@ export default {
       this.initMap(val);
   	},
     fields:function(){
-      this.showAllField();
+
+      // this.showAllField();
     }
   },
   mounted(){
@@ -50,8 +51,12 @@ export default {
   methods:{
   	...util,
     initMap(val){
+      /*清除之前的地图数据*/
+
+
       if(val){
         this.$nextTick(()=>{
+          this.clearAllLayer();
           this.map=this.createMap(this.mapId,{
             dragging:false,
             doubleClickZoom:false,
@@ -63,9 +68,9 @@ export default {
 
         });
       }else{
-        if(this.map){
-          this.clearAllLayer();
-        }
+        // if(this.map){
+        //   this.clearAllLayer();
+        // }
       }      
     },
   	showAllField(){

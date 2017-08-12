@@ -37,7 +37,8 @@ export default {
         name:"",
         sex:true,
         phone:"",
-        email:""
+        email:"",
+        createdTime:""
       },
       emailState:"",
       phoneState:"",
@@ -80,7 +81,18 @@ export default {
         userInfo=JSON.parse(localStorage.getItem("user"));
         if(!userInfo){
           this.popupVisible=true;
+          return;
         }
+
+        /*检查是否过期,过期时间为一周*/
+        if(Date.now()-userInfo.createdTime>(7*24*60*60*1000+60*60*1000)){
+          this.setItem("user","");
+          this.popupVisible=true;
+          return;
+        }
+
+        this.user=userInfo;
+
       }catch(e){
         console.log(e);
         /*用户之前没有填写个人信息,提示用户填写个人信息*/
@@ -110,6 +122,8 @@ export default {
     saveUserInfo(){
       /*将数据发送到服务器*/
       /*成功后就可进入 圈地界面*/
+      this.user.createdTime=Date.now();
+
       localStorage.setItem("user",JSON.stringify(this.user));
       console.log(Toast);
       setTimeout(()=>{
