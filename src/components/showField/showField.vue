@@ -62,7 +62,8 @@ export default {
             doubleClickZoom:false,
             preferCanvas:true,
             tap:false,
-            touchZoom:false
+            touchZoom:false,
+            scrollWheelZoom: false,
           });
           this.showAllField();
 

@@ -215,7 +215,7 @@ export default {
       var point=this.pointQuene.pop();
           this.bounds.pop();
       if(this.pointQuene.length!=0){
-        this.addDashedLine();
+        // this.addDashedLine();
       }else{
         this.clearAllPoint();
         this.painterState=-1;
