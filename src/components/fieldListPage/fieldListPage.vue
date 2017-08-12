@@ -1,5 +1,6 @@
 <template>
 	<div class="field-list-page-wrap">
+    <p class="tips">友情提示：您的测量结果会在您退出本工具时发送至您的邮箱</p>
 		<field-list-item :visable="visable" v-for="(item,index) in fieldList" :index="index" :field="item" :key="item.timestamp"></field-list-item>
 		<div class="no-field" v-show="fieldList.length==0">暂无已测量土地<br>请去圈地页面添加土地</div>
 	</div>
@@ -87,5 +88,11 @@ export default {
 			line-height:2;
 			color:#d2cece;
 		}
+    .tips{
+      font-size:0.5rem;
+      color:gray;
+      padding:0.5rem 0.25rem 0;
+      text-align:center;
+    }
 	}
 </style>

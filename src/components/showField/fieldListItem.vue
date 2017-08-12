@@ -4,7 +4,7 @@
 			<show-field :visable="visable" :fields="[{bounds:field.bounds}]"></show-field>
 		</div>
 		<div class="field-detail-info">
-			<p>编号：{{index}}</p>
+			<p>编号：{{index+1}}</p>
 			<p>土地名： {{field.fieldName}}</p>
 			<p>作物： {{field.crop}}</p>
 			<p>面积： {{field.area | formatArea }}</p>
