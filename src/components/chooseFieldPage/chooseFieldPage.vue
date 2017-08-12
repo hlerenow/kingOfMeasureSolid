@@ -94,7 +94,7 @@ export default {
 	},
 	mounted() {
 		this.init();
-		console.log(this.visable);
+		// console.log(this.visable);
 		this.popupVisible = this.visable;
 	},
 	methods: {

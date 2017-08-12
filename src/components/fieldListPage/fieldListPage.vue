@@ -1,6 +1,6 @@
 <template>
 	<div class="field-list-page-wrap">
-		<field-list-item :visable="visable" v-for="item in fieldList" :field="item" :key="item.timestamp"></field-list-item>
+		<field-list-item :visable="visable" v-for="(item,index) in fieldList" :index="index" :field="item" :key="item.timestamp"></field-list-item>
 		<div class="no-field" v-show="fieldList.length==0">暂无已测量土地<br>请去圈地页面添加土地</div>
 	</div>
 </template>
