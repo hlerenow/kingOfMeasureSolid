@@ -1,14 +1,21 @@
 <template>
 	<div class="field-list-page-wrap">
     <p class="tips">友情提示：您的测量结果会只会保留7天哦</p>
-		<field-list-item :visable="visable" v-for="(item,index) in fieldList" :index="index" :field="item" :key="item.timestamp"></field-list-item>
+		<field-list-item @click.native="selectItem(item)" :visable="visable" v-for="(item,index) in fieldList" :index="index" :field="item" :key="item.timestamp"></field-list-item>
 		<div class="no-field" v-show="fieldList.length==0">暂无已测量土地<br>请去圈地页面添加土地</div>
+    <div class="register">
+      <p class="tips">如果想了解更多关于土地的信息，请移步到 <a href="http://app.yeegen.com">云景</a></p>
+      <field label="用户名" v-model="username">
+      </field>
+      <mt-button @click.native="register" size="large" class="register-btn" type="primary">一键注册云景</mt-button>
+    </div> 
 	</div>
 </template>
 
 <script>
-import {Button} from "mint-ui"
-import fieldListItem from "@/components/showField/fieldListItem";
+import {Button,Field,MessageBox} from "mint-ui"
+import fieldListItem from "@/components/showField/fieldListItem"
+import http from "@/libs/http"
 
 export default {
 
@@ -16,8 +23,11 @@ export default {
 
   data () {
     return {
-    	fieldList:[]
-    };
+    	fieldList:[],
+      fieldInfo:{},
+      fieldDetailVisable:false,
+      username:""
+    }
   },
   props:{
   	visable:{
@@ -26,9 +36,13 @@ export default {
   },
   components:{
   	fieldListItem,
-    mtButton:Button
+    mtButton:Button,
+    Field
   },
   created(){
+    /*获取手机号*/
+    let user=JSON.parse(localStorage.getItem("user"));
+    this.username=user.phone;
     /*注册事件*/
     this.$bus.$on("submitField", (field) => {
       this.saveFieldToStorage(field);
@@ -59,6 +73,7 @@ export default {
   		temp.push(field);
   		this.fieldList=temp;
   		localStorage.setItem("fields",JSON.stringify(temp));
+      /*发送数据到服务器*/
   	},
     /*检查过期数据，过期时间为一周*/
     checkTimeout(list){
@@ -70,6 +85,32 @@ export default {
           }
       }
       return res;
+    },
+    selectItem(item){
+
+
+      this.fieldDetailVisable=true;
+    },
+    /*提交注册申请*/
+    async register(){
+      window._czc.push(["_trackEvent","侧地王注册","注册","列表页",this.username]);
+
+      try {
+        var res = await http.post("http://app.yeegen.com:5551/user/register", {
+          "name": this.username,
+          "password": this.username,
+          "phone": this.username,
+          "email": "yeegen@qq.com",
+          "region": "sss sss xxx", // 省 市 县
+          "crop": "xxx",
+        });
+
+        /*提示用户 注册申请已提交，稍后会有工作人员与您联系，请保持手机的畅通*/
+          MessageBox('提示', '注册申请已提交，稍后会有工作人员与您联系，请保持手机的畅通');    
+      } catch (e) {
+        console.log(e);
+      };
+            
     }
   }
 };
@@ -77,10 +118,22 @@ export default {
 
 <style lang="less" scoped>
 	.field-list-page-wrap{
+    position:relative;
 		overflow-y:scroll;
 		overflow-x: hidden;
 		height:100%;
     background-color: white;
+    .register{
+      position:fixed;
+      bottom:2.8rem;
+      left:0;
+      background-color:white;
+      z-index: 999;
+      // box-shadow: 0 -5px 2px 2px gray;
+      border-top:1px solid #f1f1f1;
+
+    }
+
 		.no-field{
 			box-sizing:border-box;
 			display:block;
@@ -99,6 +152,10 @@ export default {
     .send-email{
       border-radius:0;
       font-size: 0.7rem;
+    }
+    .register-btn{
+      font-size:0.7rem;
+      border-radius:0;
     }
 	}
 </style>

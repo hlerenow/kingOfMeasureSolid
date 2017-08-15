@@ -27,7 +27,7 @@ import Location from "@/components/Location/location"
   
 
 
-  
+
 export default {
 
   name: 'LMapEditorMobile',
@@ -49,7 +49,6 @@ export default {
       vrPoint:null,
       /*解决颜色填充不了bug*/
       bounds:[]
-
     };
   },
   components:{

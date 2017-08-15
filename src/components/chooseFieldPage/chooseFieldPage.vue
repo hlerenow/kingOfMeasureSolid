@@ -149,6 +149,8 @@ export default {
 				fieldName:this.fieldName,
 				area:this.area
 			});
+
+			/* 发送数据到 服务器 */
 			
 			// Toast({
 			// 	message: '信息保存成功，即将进入圈地界面',

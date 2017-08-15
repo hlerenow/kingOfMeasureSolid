@@ -143,14 +143,14 @@ export default {
 			width:2.0rem;
 			height:2.0rem;
 			position:absolute;
-			background-color:white;
+			background-color:rgb(79, 174, 241);
 			overflow:hidden;
 			left:0.5rem;
 			top:.5rem;
 			z-index: 999;
 			border-radius:50%;
 			img{
-				height:80%;
+				height:60%;
 				width:auto;
 				position:relative;
 				left:50%;

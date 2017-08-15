@@ -9,7 +9,9 @@
         <field-list-page :visable="active=='tab2'"></field-list-page>
       </tab-container-item>
       <tab-container-item id="tab3" class="tab-item"  >
-        教程添加中，敬请请期待...
+        <p class="teach-tips">
+            教程添加中，敬请请期待...
+        </p>
       </tab-container-item>
     </tab-container>
     <tabbar class="bar-bottom" v-model="active" >
@@ -106,6 +108,14 @@ p{
         height:0;    
   }
 }
+
+.teach-tips{
+    text-align: center;
+    margin-top: 13.0rem;
+    color: gray;
+    font-size:0.7rem;
+}
+
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -134,5 +144,9 @@ p{
       }
     }
   }
+}
+/* 隐藏站长统计字样 */
+#cnzz_stat_icon_1263557514{
+  display:none;
 }
 </style>
