@@ -24,7 +24,10 @@ import * as util from "./util"
 import chooseFieldPage from "components/chooseFieldPage/chooseFieldPage"
 import {Button,Header} from "mint-ui"
 import Location from "@/components/Location/location"
+  
 
+
+  
 export default {
 
   name: 'LMapEditorMobile',
@@ -101,6 +104,17 @@ export default {
       this.$bus.$on("searchFinish",(payload)=>{
 
         _this.map.panTo(payload.pos);
+        payload.pos=eviltransform.bd2gcj(payload.pos.lat,payload.pos.lng);
+        let redIcon=L.icon({
+            iconUrl: 'static/location-blue.png',
+            iconSize: [20, 20],
+            iconAnchor: [10, 20],
+            popupAnchor: [0, -20]
+          });
+
+        L.marker(payload.pos,{
+          "icon":redIcon
+        }).addTo(_this.map);
       });
 
       if(this.map){

@@ -1,9 +1,8 @@
 <template>
 	<div class="field-list-page-wrap">
-    <p class="tips">友情提示：您的测量结果会只会保留7天，请及时发送至您的邮箱。</p>
+    <p class="tips">友情提示：您的测量结果会只会保留7天哦</p>
 		<field-list-item :visable="visable" v-for="(item,index) in fieldList" :index="index" :field="item" :key="item.timestamp"></field-list-item>
 		<div class="no-field" v-show="fieldList.length==0">暂无已测量土地<br>请去圈地页面添加土地</div>
-    <mt-button v-show="fieldList.length!=0" class="send-email" size="large" type="primary">发送土地信息到邮箱</mt-button>
 	</div>
 </template>
 

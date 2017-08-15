@@ -7,7 +7,7 @@
       popup-transition="popup-fade">  
         <div class="popup-content">
             <div class="title">填写土地信息</div>
-            <div class="tips">填写土地信息后即可测算土地面积</div>
+            <div class="tips">填写准确的信息后，测量的土地面积准确率会更高哦</div>
             <div class="map-wrap">
 	       		<show-field :visable="popupVisible" :fields="bounds"></show-field>
             </div>
