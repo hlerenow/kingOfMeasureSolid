@@ -1,5 +1,6 @@
 <template>
 	<div class="l-map-mobile-wrap">
+    <location id="location"></location>
     <choose-field-page :visable="painterState==1" ></choose-field-page>
     <mt-header  v-show="painterState==0" title="圈地中..." class="header">
         <template slot="left">
@@ -22,7 +23,7 @@ import L from 'leaflet'
 import * as util from "./util"
 import chooseFieldPage from "components/chooseFieldPage/chooseFieldPage"
 import {Button,Header} from "mint-ui"
-// import eviltransform from "eviltransform"
+import Location from "@/components/Location/location"
 
 export default {
 
@@ -51,7 +52,8 @@ export default {
   components:{
     mtButton:Button,
     [Header.name]:Header,
-    chooseFieldPage
+    chooseFieldPage,
+    Location
   },
   props:{
   	fields:{
@@ -93,6 +95,12 @@ export default {
 
       this.$bus.$on("reChoose",()=>{
         this.reset();
+      });
+
+      var _this=this;
+      this.$bus.$on("searchFinish",(payload)=>{
+
+        _this.map.panTo(payload.pos);
       });
 
       if(this.map){
@@ -302,22 +310,10 @@ export default {
     },
     localtion(){  
       var _this=this;
-      // var geolocation = new BMap.Geolocation();
-      // geolocation.getCucrrentPosition(function(r) {
-      //   if (this.getStatus() == BMAP_STATUS_SUCCESS) {
-
-      //     var pos = eviltransform.bd2gcj(r.point.lat, r.point.lng);
-      //     console.log(r.point,pos)
-
-      //     _this.map.panTo(pos);
-      //   } else {}
-      // }, {
-      //   enableHighAccuracy: true
-      // })
-
       var nowCity=new BMap.LocalCity();
 
       nowCity.get((obj)=>{
+        obj;
         var pos=eviltransform.bd2gcj(obj.center.lat, obj.center.lng);
         this.map.panTo(pos);
         this.map.setZoom(10);
@@ -334,6 +330,7 @@ export default {
 </style>
 
 <style type="text/css">
+  
   .leaflet-middle-icon{
     opacity: 0.8;
     width: 8px;

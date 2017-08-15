@@ -79,6 +79,8 @@ export default {
       let userInfo="";
       try{
         userInfo=JSON.parse(localStorage.getItem("user"));
+        
+
         if(!userInfo){
           this.popupVisible=true;
           return;

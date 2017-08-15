@@ -39,9 +39,7 @@ export const createMap = function(mapId, options) {
 		attributionControl: false, //右下角角标
 		maxZoom: 24,
 		dragging: true,
-		zoom: 4,
-		center: [0, 0],
-
+		zoom: 4
 	};
 
 	var _opt = Object.assign(defaultOption, options);
