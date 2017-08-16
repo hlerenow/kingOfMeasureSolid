@@ -146,7 +146,7 @@ export default {
 			background-color:rgb(79, 174, 241);
 			overflow:hidden;
 			left:0.5rem;
-			top:.5rem;
+			top:2.1rem;
 			z-index: 999;
 			border-radius:50%;
 			img{

@@ -87,13 +87,17 @@ export default {
       return res;
     },
     selectItem(item){
-
-
+      /*选择了那块土地*/
       this.fieldDetailVisable=true;
     },
     /*提交注册申请*/
     async register(){
+      /*cnzz  统计*/
       window._czc.push(["_trackEvent","侧地王注册","注册","列表页",this.username]);
+
+      /*暂不提交申请记录*/
+
+      return;
 
       try {
         var res = await http.post("http://app.yeegen.com:5551/user/register", {
@@ -109,6 +113,7 @@ export default {
           MessageBox('提示', '注册申请已提交，稍后会有工作人员与您联系，请保持手机的畅通');    
       } catch (e) {
         console.log(e);
+          MessageBox('提示', '注册申请提交失败，请稍后再试');    
       };
             
     }
@@ -129,6 +134,7 @@ export default {
       left:0;
       background-color:white;
       z-index: 999;
+      width:100%;
       // box-shadow: 0 -5px 2px 2px gray;
       border-top:1px solid #f1f1f1;
 

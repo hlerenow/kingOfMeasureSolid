@@ -150,6 +150,10 @@ export default {
 				area:this.area
 			});
 
+			/*cnzz 统计*/
+		    window._czc.push(["_trackEvent","土地圈选","成功圈选土地","使用了测地王",this.username]);
+
+		    /*接口尚未完成*/
 			/* 发送数据到 服务器 */
 			
 			// Toast({
