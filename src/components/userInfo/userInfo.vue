@@ -130,13 +130,12 @@ export default {
       this.user.createdTime=Date.now();
 
       localStorage.setItem("user",JSON.stringify(this.user));
-      console.log(Toast);
       setTimeout(()=>{
         this.popupVisible=false;
-      },3000);
+      },1500);
       Toast({
         message: '信息保存成功，即将进入圈地界面',
-        duration: 3000,
+        duration: 1500,
         position:"middle",
         className:"popup-tips"
       });

@@ -13,8 +13,8 @@
 			</mt-header>      	
 	        <div class="popup-content">
 	            <div class="tips"></div>
-	            <field label="城市"  placeholder="必填" v-model="city"></field>
-	            <field label="地名"   placeholder="必填" v-model="address"></field> 
+	            <field :state="cityState" label="城市"  placeholder="必填" v-model="city"></field>
+	            <field :state="addressState" label="地名"   placeholder="必填" v-model="address"></field> 
 	            <mt-button size="large" type="primary" @click.native="search" >搜索</mt-button>
 	        	<div class="result-tips" v-show="!firstSearch">搜索结果：</div>
 		        <ul class="city-list" v-show="addressList.length">
@@ -32,7 +32,7 @@
 import {
 	Popup,
 	Field,
-	Toast,
+	MessageBox,
 	Button,
 	Header
 } from 'mint-ui'
@@ -40,6 +40,7 @@ import {
 import showField from '@/components/showField/showField'
 import * as util from "@/components/LMapEditorMobile/util"
 
+require("eviltransform")
 export default {
 
 	name: 'localtion',
@@ -56,13 +57,15 @@ export default {
 			fieldName: "",
 			crop: "",
 			addressList: [],
-			searchService: false
+			searchService: false,
+			cityState:"",
+			addressState:""
 		};
 	},
 	watch:{
 		city(val){
 			this.searchService = this.getSearchHandle(this.city);
-			if (this.city.trim() == "") {
+			if (this.city== "") {
 				this.city = this.cityName;
 			}			
 		}
@@ -70,7 +73,7 @@ export default {
 	components: {
 		Popup,
 		Field,
-		Toast,
+		MessageBox,
 		mtButton: Button,
 		[Header.name]:Header
 	},
@@ -91,8 +94,19 @@ export default {
 			});
 		},
 		search() {
+			if(this.address==""){
+				this.addressState="error";
+				return;
+			}
+
+			if(this.city==""){
+				this.cityState='error';
+				return;
+			}
+			this.cityState="success";
+			this.addressState="success";
 			/*服务已经实例化完成*/
-			if(this.searchService&&this.address.trim()!=""){
+			if(this.searchService){
 				/*判断是否是进入页面的第一次搜索*/
 				this.searchService.search(this.address);
 
@@ -146,7 +160,7 @@ export default {
 			background-color:rgb(79, 174, 241);
 			overflow:hidden;
 			left:0.5rem;
-			top:2.1rem;
+			top:0.5rem;
 			z-index: 999;
 			border-radius:50%;
 			img{

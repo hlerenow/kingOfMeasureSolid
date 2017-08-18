@@ -1,7 +1,14 @@
 <template>
 	<div class="field-list-page-wrap">
-    <p class="tips">友情提示：您的测量结果会只会保留7天哦</p>
+    <p class="tips">免责声明：本报告存在一定误差，不应被用于任何对准确性要</br>求较高的用途，也不作为任何与土地面积有关的事务的依据</p>
 		<field-list-item @click.native="selectItem(item)" :visable="visable" v-for="(item,index) in fieldList" :index="index" :field="item" :key="item.timestamp"></field-list-item>
+    <div class="instruct" v-show="fieldList.length>0">
+          <span class="big people">您</span>所拥有的土地总面积为<span class="area big">{{totalArea | area }}公顷</span>，已击败全国<span class="percent big">{{totalArea | level}}</span>的用户。
+          还想知道温度？降雨？产量预估？         
+    </div>
+    <div class="space">
+   
+    </div>
 		<div class="no-field" v-show="fieldList.length==0">暂无已测量土地<br>请去圈地页面添加土地</div>
     <div class="register">
       <p class="tips">如果想了解更多关于土地的信息，请移步到 <a href="http://app.yeegen.com">云景</a></p>
@@ -26,7 +33,8 @@ export default {
     	fieldList:[],
       fieldInfo:{},
       fieldDetailVisable:false,
-      username:""
+      username:"",
+      totalArea:0
     }
   },
   props:{
@@ -39,10 +47,24 @@ export default {
     mtButton:Button,
     Field
   },
+  watch:{
+    visable(val){
+      if(val){
+      /*获取手机号*/
+        let user=JSON.parse(localStorage.getItem("user"));
+        this.username=user.phone;         
+      }
+    },
+    fieldList(val){
+      var sum=0;
+      for(var i in val){
+        sum+=parseFloat(val[i].area);
+      }
+      this.totalArea=sum.toFixed(2);
+    }
+  },
   created(){
-    /*获取手机号*/
-    let user=JSON.parse(localStorage.getItem("user"));
-    this.username=user.phone;
+
     /*注册事件*/
     this.$bus.$on("submitField", (field) => {
       this.saveFieldToStorage(field);
@@ -92,6 +114,7 @@ export default {
     },
     /*提交注册申请*/
     async register(){
+           
       /*cnzz  统计*/
       window._czc.push(["_trackEvent","侧地王注册","注册","列表页",this.username]);
 
@@ -114,8 +137,38 @@ export default {
       } catch (e) {
         console.log(e);
           MessageBox('提示', '注册申请提交失败，请稍后再试');    
-      };
-            
+      };      
+    }
+  },
+  filters:{
+    level(val){
+      if(val>0&&val<=(4.5*666.7)){
+        return "0%";
+      }
+      if(val>(4.5*666.7)&&val<=(9*666.7)){
+        return "15.8%";
+      }
+      if(val>(9*666.7)&&val<=(13.5*666.7)){
+        return "50%";
+      }
+
+      if(val>(13.5*666.7)&&val<=(18*666.7)){
+        return "65.8%";
+      }
+
+      if(val>(18*666.7)&&val<=(22.5*666.7)){
+        return "97.2%";
+      }      
+
+      if(val>(22.6*666.7)){
+        return "99.9%";
+      }
+
+      return "0%";
+
+    },
+    area(val){
+        return (val / 10000).toFixed(2) ;    
     }
   }
 };
@@ -137,7 +190,6 @@ export default {
       width:100%;
       // box-shadow: 0 -5px 2px 2px gray;
       border-top:1px solid #f1f1f1;
-
     }
 
 		.no-field{
@@ -162,6 +214,19 @@ export default {
     .register-btn{
       font-size:0.7rem;
       border-radius:0;
+    }
+    .space{
+      width:100%;
+      height:6rem;
+    }
+    .instruct{
+      padding:0.5rem;
+      line-height:1.5;
+      font-size: 0.5rem;
+      .big{
+        font-size:0.7rem;
+        color:red;
+      }
     }
 	}
 </style>

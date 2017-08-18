@@ -1,8 +1,6 @@
 /*leaflet */
 import L from 'leaflet';
 /*leaflet产 编辑插件*/
-/*在坐标转换库*/
-require("eviltransform");
 
 export const a = function() {
 	console.log("test");

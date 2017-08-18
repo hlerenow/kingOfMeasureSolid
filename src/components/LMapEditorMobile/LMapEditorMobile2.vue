@@ -2,11 +2,17 @@
 	<div class="l-map-mobile-wrap">
     <location id="location"></location>
     <choose-field-page :visable="painterState==1" ></choose-field-page>
+    <mt-header  v-show="painterState==0" title="圈地中..." class="header">
+        <template slot="left">
+          <div id="come-back" @click="clearPrePoint" class="tool">撤销</div>
+        </template>
+        <template slot="right">
+          <div id="finish" class="tool" @click="chooseFieldFinish">完成</div>
+        </template>
+    </mt-header>  
     <div :id="mapId" class="l-map choose-field">
       <div id="add-point" v-show="painterState!=1" class="hover-botton"></div>
 			<div id="add-point-btn" v-show="painterState!=1" @click="addFieldPoint"  ></div>
-      <div class="revoke tool" v-show="painterState==0" @click="revoke"><img src="../../assets/back.png" /></div>
-      <div class="finish tool" v-show="painterState==0" @click="chooseFieldFinish"><img src="../../assets/ok.png" /></div>
 		</div>	
 	</div>
 </template>
@@ -21,13 +27,15 @@ import Location from "@/components/Location/location"
 
 require("eviltransform");
   
+
+
+
 export default {
 
   name: 'LMapEditorMobile',
 
   data () {
     return {
-      firstPoint:null,
       initOk:false,
     	mapId:util.randomString(6),
     	painterState:-1,//-1  可以圈地 ，0 圈地中 ， 1 圈地结束
@@ -40,13 +48,9 @@ export default {
     	nowPoint:null,
     	/*当前土地多边形 实例*/
     	polygon:null,
-      tempPloygon:null,
       vrPoint:null,
       /*解决颜色填充不了bug*/
-      bounds:[],
-      /*用于存储 圈地过程中 的点 和线*/
-      tempPointLineLayer:[],
-      marker:null
+      bounds:[]
     };
   },
   components:{
@@ -98,23 +102,18 @@ export default {
       });
 
       var _this=this;
-      /*地址搜索完成             */
       this.$bus.$on("searchFinish",(payload)=>{
-        /*坐标系转换*/
-        var tempPos=eviltransform.bd2gcj(payload.pos.lat,payload.pos.lng);
 
-        _this.map.flyTo(tempPos);
+        _this.map.panTo(payload.pos);
+        payload.pos=eviltransform.bd2gcj(payload.pos.lat,payload.pos.lng);
         let redIcon=L.icon({
             iconUrl: 'static/location-blue.png',
             iconSize: [20, 20],
             iconAnchor: [10, 20],
             popupAnchor: [0, -20]
           });
-        if(this.marker){
-          this.marker.remove();
-          this.marker=null;
-        }
-        this.marker=L.marker(tempPos,{
+
+        L.marker(payload.pos,{
           "icon":redIcon
         }).addTo(_this.map);
       });
@@ -126,9 +125,15 @@ export default {
       this.addPointDom = document.getElementById('add-point');
 
       this.map = this.createMap(this.mapId);
+
+      this.map.on("move",(e)=>{
+        if(this.painterState==0){
+          // this.addDashedLine();
+        }
+      });
+
       this.localtion();
     },
-    /*圈地过程中添加点*/
   	addFieldPoint(){
 		  	var newPointPos=this.getWillPointLatLang();
 	  		var line=null;
@@ -140,113 +145,113 @@ export default {
         }
 
 	  		/*判断圈地是否结束*/
-        if(this.pointQuene.length>2&&this.isFinish(newPointPos,this.pointQuene[0])){
+        if(this.pointQuene.length>2&&this.isFinish(newPointPos,this.pointQuene[0].latlngPos)){
           console.log("结束圈地");
           this.chooseFieldFinish();
 	  			return;
 	  		}
 
-        this.pointQuene.push([newPointPos.lat,newPointPos.lng]);
 
-        this.drawPolygon(this.pointQuene);
-        this.drawLinePoint(this.pointQuene);
-
-        // this.
+        /*绘制圈地过程中的 线*/
+	  		if(this.pointQuene.length>0){
+					line = this.addLine(this.map, this.pointQuene[this.pointQuene.length - 1].latlngPos, newPointPos);
+	  		}
 	  		
+	  		/* 绘画过程 中的 实点*/
+				var point = this.addCircle(this.map, newPointPos, {
+					fill: true,
+					fillColor: 'white',
+					fillOpacity: 1,
+					radius: 8,
+          color:'#20a0ff'
+				});
+
+
+        /*添加记录过程中的点*/
+        this.bounds.push([newPointPos.lat,newPointPos.lng]);
+        /*这个变量储存的值，leaflet移动端 填充 多边形 路劲 会 有问题，*/
+	  		this.pointQuene.push({
+	    		/*点的实例*/
+	    		point:point,
+	    		latlngPos:newPointPos,
+	    		/*点对应的线条实例，第一个点没有线条实例*/
+	    		line:line  			
+	  		});
   	},
-    /*圈地完成*/
     chooseFieldFinish(){
         /*点不能少于3个*/
-        if(this.pointQuene.length<3){
+        if(this.bounds.length<3){
           return;
         }
 
-        this.$bus.$emit("finish",this.pointQuene);
-
-        console.log("绘制完成");
+        this.$bus.$emit("finish",this.bounds);
         /*改变 绘画状态*/
         this.painterState=1;
+        /*移除虚拟点*/
+        if(this.vrPoint){
+          this.vrPoint.remove();
+        }
+
+
+        /*移除所有的绘画中的点*/
+        this.clearAllPoint();
+
+
+        /*创建可编辑的土地*/
+        this.createField();
     },
-    /*获取下一个点*/
+    addDashedLine() {
+      if (this.pointQuene.length < 1) {
+        return;
+      }
+
+      if (this.vrPoint) {
+        this.vrPoint.remove();
+      }
+
+      var willPoint = this.getWillPointLatLang();
+      var lastPoint = this.pointQuene[this.pointQuene.length - 1].latlngPos;
+      this.vrPoint = this.addLine(this.map, lastPoint, willPoint, {
+        dashArray: '8, 10',
+        opacity: 0.8,
+        weight: 3,
+        color: '#fff',
+        lineCap: 'square',
+        className: "point-pre"
+      });
+    },
   	getWillPointLatLang(){
 	  	var pos=this.addPointDom.getBoundingClientRect();
 	  	var domCenter={
 	  		x:(pos.left+pos.right)/2,
 	  		y:(pos.top+pos.bottom)/2
 	  	}  		
+
   		return this.map.containerPointToLatLng(domCenter); 		
   	},
-    /*绘画圈地过程中的点和线*/
-    drawLinePoint(points){
-      this.clearLinePoint();
-      var res=[];
-
-      for(let i=0;i<points.length;i++){
-          let _opt = {
-            fill: true,
-            fillColor: 'white',
-            fillOpacity: 1,
-            radius: 8,
-            color:'#20a0ff'
-          };
-          let handle = L.circleMarker(points[i], _opt).addTo(this.map);         
-
-          res.push(handle);
-
-          if (points.length==2&&i==1) {
-
-            let _opt = {
-              opacity: 0.6,
-              weight: 2,
-              color: '#fff',
-              lineCap: 'square',
-            };
-
-            let line = L.polyline([points[i - 1], points[i]], _opt).addTo(this.map);
-
-            res.push(line);
-          }
-      }
-
-      this.tempPointLineLayer=res;
-    },
-    /*清除绘画过程中的点和线*/
-    clearLinePoint(){
-      var tempPointLineLayer=this.tempPointLineLayer;
-      for(let i in tempPointLineLayer){
-        if(tempPointLineLayer[i].remove){
-            tempPointLineLayer[i].remove();
-        }
-      }
-      this.tempPointLineLayer=[];
-    },
-    /*绘制绘画过程中的多边形*/
-    drawPolygon(points){
-      if(this.tempPloygon){
-        this.tempPloygon.remove();
-      }
-      /*绘制*/
-      if(points.length<3){
-        return ;
-      }
-      this.tempPloygon=L.polygon(points,{
-            fill: true,
-            fillColor: 'green',
-            fillOpacity: 0.5,
-            color:'white',
-            weight:0.5      
-      }).addTo(this.map);
-    },
   	/*撤销功能*/
-  	revoke(){
-      this.pointQuene.pop();
-      this.drawPolygon(this.pointQuene);
-      this.drawLinePoint(this.pointQuene);
+  	clearPrePoint(){
+      /*在绘画过程中才可以撤销*/
+      if(this.painterState!=0){
+        return;
+      }
 
-      if(this.pointQuene.length==0){
-        /*退出编辑状态*/
+      var point=this.pointQuene.pop();
+          this.bounds.pop();
+      if(this.pointQuene.length!=0){
+        // this.addDashedLine();
+      }else{
+        this.clearAllPoint();
         this.painterState=-1;
       }
+
+      if(point){
+        point.point.remove();
+        if(point.line){
+          point.line.remove();
+        }
+      }
+  	 
     },
   	/*判断是否选择结束*/
   	isFinish(pos1,pos2){
@@ -259,21 +264,65 @@ export default {
   			return false;
   		}
   	},
+  	/*生成可编辑的土地多边形*/
+  	createField(){
+      var tempB=this.getFieldBounds();
+
+      tempB=[].concat(tempB);
+
+      this.ploygon=this.addPolygon(this.map,this.bounds,{
+      });
+  	},
+  	/*回显土地*/
+  	showField(){
+      var showField= this.showFields();
+      for(var i in showFields){
+        this.addPolygon(this.map,showField[i].bounds);
+      }
+  	},
+    getFieldBounds(){
+      var res=[];
+      var pointQuene=this.pointQuene;
+
+      for(var i in pointQuene){
+        res.push([pointQuene[i].latlngPos.lat,pointQuene[i].latlngPos.lng]);
+      }
+
+      return res;
+    },
+    /*清除绘画过程中所有的线和点*/
+    clearAllPoint(){
+      if(this.vrPoint){
+        this.vrPoint.remove();
+      }
+
+      var pointQuene=this.pointQuene;
+
+      for(var i in pointQuene){
+        /*移除点*/
+        if(pointQuene[i].point){
+          pointQuene[i].point.remove();
+        }
+
+        if(pointQuene[i].line){
+          pointQuene[i].line.remove();
+        }
+      }
+    },
     /*重置圈地小工具,回到初始化的编辑状态*/
     reset(){
-      if(this.tempPloygon){
-        this.tempPloygon.remove();
-      }      
-      this.clearLinePoint();
+      if(this.ploygon){
+        this.ploygon.remove();
+      }
 
-
+      this.clearAllPoint();
       this.drawStart=false;
       this.pointQuene=[];
       this.painterState=-1;
       this.bounds=[];
       this.nowPoint=null;
       this.polygon=null;
-      this.vrPoint=null;        
+      this.vrPoint=null;    
     },
     localtion(){  
       var _this=this;
