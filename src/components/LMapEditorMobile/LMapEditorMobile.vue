@@ -19,7 +19,8 @@ import chooseFieldPage from "components/chooseFieldPage/chooseFieldPage"
 import {Button,Header} from "mint-ui"
 import Location from "@/components/Location/location"
 
-require("eviltransform");
+import * as eviltransform from "@/libs/transform"
+// require("eviltransform");
   
 export default {
 
@@ -98,6 +99,7 @@ export default {
       });
 
       var _this=this;
+      console.log(eviltransform);
       /*地址搜索完成             */
       this.$bus.$on("searchFinish",(payload)=>{
         /*坐标系转换*/

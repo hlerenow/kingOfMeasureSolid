@@ -67,13 +67,20 @@ export default {
 
     /*注册事件*/
     this.$bus.$on("submitField", (field) => {
-      this.saveFieldToStorage(field);
+      
+      /*获取手机号*/
+        let user=JSON.parse(localStorage.getItem("user"));
+        this.username=user.phone;     
+
+        this.saveFieldToStorage(field);
     });
 
     /*回显本地存储的土地数据*/
     var temp = [];
     try {
       temp = JSON.parse(localStorage.getItem("fields")) || [];
+      this.$bus.$emit("field-count",temp.length);   
+      
     } catch (e) {
       temp = [];
     }
@@ -94,6 +101,9 @@ export default {
 
   		temp.push(field);
   		this.fieldList=temp;
+
+      this.$bus.$emit("field-count",temp.length);   
+
   		localStorage.setItem("fields",JSON.stringify(temp));
       /*发送数据到服务器*/
   	},
@@ -120,7 +130,7 @@ export default {
 
       /*暂不提交申请记录*/
 
-      return;
+      // return;
 
       try {
         var res = await http.post("http://app.yeegen.com:5551/user/register", {
@@ -128,8 +138,9 @@ export default {
           "password": this.username,
           "phone": this.username,
           "email": "yeegen@qq.com",
-          "region": "sss sss xxx", // 省 市 县
-          "crop": "xxx",
+          "region": "- - -", // 省 市 县
+          "crop": "-",
+          "source":"测地王"
         });
 
         /*提示用户 注册申请已提交，稍后会有工作人员与您联系，请保持手机的畅通*/
@@ -220,6 +231,7 @@ export default {
       height:6rem;
     }
     .instruct{
+      text-align:center;
       padding:0.5rem;
       line-height:1.5;
       font-size: 0.5rem;

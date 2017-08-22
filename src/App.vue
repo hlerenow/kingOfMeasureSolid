@@ -9,9 +9,7 @@
         <field-list-page :visable="active=='tab2'"></field-list-page>
       </tab-container-item>
       <tab-container-item id="tab3" class="tab-item"  >
-        <p class="teach-tips">
-            教程添加中，敬请请期待...
-        </p>
+        <teach></teach>
       </tab-container-item>
     </tab-container>
     <tabbar class="bar-bottom" v-model="active" >
@@ -21,10 +19,10 @@
         </tab-item>
         <tab-item id="tab2">
             <img slot="icon" src="./assets/land.png">        
-            已测土地
+            已测土地 <mt-badge type="success">{{fieldCount}}</mt-badge>
         </tab-item>
         <tab-item  id="tab3">
-            <img slot="icon" src="./assets/question.png">        
+            <img slot="icon" src="./assets/question.png">       
             快速教程
         </tab-item>              
     </tabbar> 
@@ -36,8 +34,9 @@ import LMapEditorMobile from '@/components/LMapEditorMobile/LMapEditorMobile'
 import showField from '@/components/showField/showField'
 import userInfo from '@/components/userInfo/userInfo'
 import fieldListPage from "@/components/fieldListPage/fieldListPage"
+import teach from "@/components/teach/teach"
 
-import {TabContainer, TabContainerItem, Tabbar, TabItem} from 'mint-ui';
+import {Badge ,TabContainer, TabContainerItem, Tabbar, TabItem} from 'mint-ui';
 
 export default {
   name: 'app',
@@ -45,6 +44,7 @@ export default {
     return {
       active:"tab1",
       chooseAllFields:[],
+      fieldCount:0
     }
   },
   components:{
@@ -55,19 +55,19 @@ export default {
     TabContainerItem,
     Tabbar,
     TabItem,
-    fieldListPage
+    fieldListPage,
+    teach,
+    [Badge.name]:Badge 
   },
   created(){
+    this.$bus.$on("field-count",(count)=>{
+      this.fieldCount=count;
+    });
   },
   mounted(){
   },
   methods:{
-    addOneField(bounds){
-      this.chooseAllFields.push({
-        name:"23123",
-        bounds:bounds
-      });
-    },
+
   },
   filters:{
 

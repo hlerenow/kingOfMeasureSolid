@@ -31,6 +31,8 @@
 import {Popup,Field,Toast,Button } from 'mint-ui'
 import showField from '@/components/showField/showField'
 import * as util from "@/components/LMapEditorMobile/util"
+import http from "@/libs/http"
+
 
 export default {
 
@@ -108,7 +110,7 @@ export default {
 		cancel() {
 			this.$bus.$emit("reChoose");
 		},
-		saveUserInfo() {
+		async saveUserInfo() {
 			/*将数据发送到服务器*/
 			/*成功后就可进入 圈地界面*/
 			/*数据校验*/
@@ -137,7 +139,7 @@ export default {
 			this.showComeBack=true;
 
 
-	        var userInfo=JSON.parse(localStorage.getItem("user"));
+	    var userInfo=JSON.parse(localStorage.getItem("user"));
 			this.$bus.$emit("submitField",{
 				timestamp:Date.now(),
 				bounds:this.bounds[0].bounds,
@@ -149,9 +151,25 @@ export default {
 				fieldName:this.fieldName,
 				area:this.area
 			});
+	
 
 			/*cnzz 统计*/
 		    window._czc.push(["_trackEvent","土地圈选","成功圈选土地","使用了测地王",this.username]);
+
+			try {
+			var res = await http.post("http://dev.yeegen.com:7001/geoking_info", {
+			    phone:userInfo.phone,
+			    timestamp:parseInt(Date.now()/1000),
+			    fieldName:this.fieldName,
+			    area:this.area,
+			    crop:this.crop,
+			    bounds:JSON.stringify(this.bounds[0].bounds),
+			});
+
+			/*提示用户 注册申请已提交，稍后会有工作人员与您联系，请保持手机的畅通*/
+			} catch (e) {
+				console.log(e);
+			};  
 
 		    /*接口尚未完成*/
 			/* 发送数据到 服务器 */
@@ -162,6 +180,7 @@ export default {
 			// 	position: "middle",
 			// 	className: "popup-tips"
 			// });
+			
 		}
 	},
 	filters:{

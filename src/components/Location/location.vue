@@ -40,7 +40,9 @@ import {
 import showField from '@/components/showField/showField'
 import * as util from "@/components/LMapEditorMobile/util"
 
-require("eviltransform")
+import * as eviltransform from "@/libs/transform"
+
+
 export default {
 
 	name: 'localtion',

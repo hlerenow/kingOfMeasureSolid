@@ -20,7 +20,7 @@ var webpackConfig = merge(baseWebpackConfig, {
   },
   devtool: false,
   output: {
-    publicPath: "/king",
+    publicPath: "./",
     path: config.build.assetsRoot,
     filename: utils.assetsPath('js/[name].[chunkhash].js'),
     chunkFilename: utils.assetsPath('js/[id].[chunkhash].js')
