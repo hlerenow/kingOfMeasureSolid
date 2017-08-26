@@ -1,13 +1,14 @@
 <template>
 	<div class="field-list-page-wrap">
     <p class="tips">免责声明：本报告存在一定误差，不应被用于任何对准确性要</br>求较高的用途，也不作为任何与土地面积有关的事务的依据</p>
-		<field-list-item @click.native="selectItem(item)" :visable="visable" v-for="(item,index) in fieldList" :index="index" :field="item" :key="item.timestamp"></field-list-item>
+    <div v-for="(item,index) in fieldList" v-if="lazyLoad">
+    	<field-list-item @click.native="selectItem(item)" :visable="visable"  :index="index" :field="item" :key="item.timestamp"></field-list-item>
+    </div>
     <div class="instruct" v-show="fieldList.length>0">
           <span class="big people">您</span>所拥有的土地总面积为<span class="area big">{{totalArea | area }}公顷</span>，已击败全国<span class="percent big">{{totalArea | level}}</span>的用户。
           还想知道温度？降雨？产量预估？         
     </div>
     <div class="space">
-   
     </div>
 		<div class="no-field" v-show="fieldList.length==0">暂无已测量土地<br>请去圈地页面添加土地</div>
     <div class="register">
@@ -20,7 +21,7 @@
 </template>
 
 <script>
-import {Button,Field,MessageBox} from "mint-ui"
+import {Button,Field,MessageBox, CellSwipe} from "mint-ui"
 import fieldListItem from "@/components/showField/fieldListItem"
 import http from "@/libs/http"
 
@@ -30,11 +31,17 @@ export default {
 
   data () {
     return {
+      lazyLoad:false,
     	fieldList:[],
       fieldInfo:{},
       fieldDetailVisable:false,
       username:"",
-      totalArea:0
+      totalArea:0,
+      delButton: [{
+        content: 'Delete',
+        style: { background: 'red', color: '#fff' },
+        handler: function(){console.log(1)}
+      }]
     }
   },
   props:{
@@ -45,7 +52,8 @@ export default {
   components:{
   	fieldListItem,
     mtButton:Button,
-    Field
+    Field,
+    [CellSwipe.name]: CellSwipe
   },
   watch:{
     visable(val){
@@ -84,10 +92,12 @@ export default {
     } catch (e) {
       temp = [];
     }
-
-
     this.fieldList = this.checkTimeout(temp);
-
+  },
+  mounted (){
+    setTimeout(() => {
+      this.lazyLoad = true
+    })
   },
   methods:{
   	saveFieldToStorage(field){

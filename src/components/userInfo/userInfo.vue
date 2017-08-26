@@ -19,13 +19,13 @@
             </div> -->
             <field label="手机号"  :attr="{ maxlength: 11}"  placeholder="必填" type="tel" v-model="user.phone"></field>      
             <!-- <field label="邮箱" :state="emailState" placeholder="必填" type="email" v-model="user.email"></field>  -->
-            <mt-button @click.native="saveUserInfo" :disabled="btnState" size="large" type="primary">开始圈地</mt-button>
+            <mt-button @click.native="saveUserInfo" size="large" type="primary">开始圈地</mt-button>
         </div>  
     </popup>
 </template>
 
 <script>
-import {Popup,Radio,Field,Switch,Toast,Button } from 'mint-ui'
+import {Popup, Radio, Field, Switch, Toast, Button, MessageBox } from 'mint-ui'
 
 export default {
 
@@ -125,6 +125,11 @@ export default {
       // }
     },
     saveUserInfo(){
+      /* 判断是否填写正确的手机号  */
+      if (this.btnState) {
+        MessageBox.alert('请填写正确的手机号', '提示')
+        return  
+      }
       /*将数据发送到服务器*/
       /*成功后就可进入 圈地界面*/
       this.user.createdTime=Date.now();

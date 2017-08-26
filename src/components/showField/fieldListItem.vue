@@ -58,6 +58,7 @@ export default {
 
 <style lang="less" scoped>
 	.field-list-item-wrap{
+		width:100%;
 		display:flex;
 		border-bottom:1px solid #e3e3e3;
 		align-items:center;

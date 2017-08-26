@@ -99,7 +99,6 @@ export default {
       });
 
       var _this=this;
-      console.log(eviltransform);
       /*地址搜索完成             */
       this.$bus.$on("searchFinish",(payload)=>{
         /*坐标系转换*/
