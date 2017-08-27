@@ -1,6 +1,6 @@
 <template>
 	<div class="field-list-page-wrap">
-    <p class="tips">免责声明：本报告存在一定误差，不应被用于任何对准确性要</br>求较高的用途，也不作为任何与土地面积有关的事务的依据</p>
+    <p class="tips">免责声明：本报告存在一定误差，不应被用于任何对准确性</br>要求较高的用途，也不作为任何与土地面积有关的事务的依据</p>
     <div v-for="(item,index) in fieldList" v-if="lazyLoad">
     	<field-list-item @click.native="selectItem(item)" :visable="visable"  :index="index" :field="item" :key="item.timestamp"></field-list-item>
     </div>
@@ -78,12 +78,26 @@ export default {
       
       /*获取手机号*/
         let user=JSON.parse(localStorage.getItem("user"));
-        this.username=user.phone;     
+        this.username = user.phone;     
 
         this.saveFieldToStorage(field);
     });
 
-    /*回显本地存储的土地数据*/
+    /* 删除土地事件 */
+    this.$bus.$on('delField', (field) => {
+      for(let i in this.fieldList ) {
+        if(this.fieldList[i] === field){
+            this.fieldList[i].timestamp = 0;
+            break;
+        }
+      }
+
+      let tempList = this.checkTimeout(this.fieldList)
+
+      this.fieldList = tempList 
+      this.reStoreFieldAll(tempList)
+    })
+    /* 回显本地存储的土地数据 */
     var temp = [];
     try {
       temp = JSON.parse(localStorage.getItem("fields")) || [];
@@ -100,6 +114,9 @@ export default {
     })
   },
   methods:{
+    reStoreFieldAll(fieldList){
+      localStorage.setItem("fields",JSON.stringify(fieldList));
+    },
   	saveFieldToStorage(field){
   		var temp=[];
 
@@ -134,7 +151,12 @@ export default {
     },
     /*提交注册申请*/
     async register(){
-           
+
+      let user = JSON.parse( localStorage.getItem("user")) || {}
+      user.phone = this.username
+
+      localStorage.setItem("user",JSON.stringify(user));
+
       /*cnzz  统计*/
       window._czc.push(["_trackEvent","侧地王注册","注册","列表页",this.username]);
 
@@ -225,7 +247,7 @@ export default {
     .tips{
       font-size:0.5rem;
       color:gray;
-      padding:0.5rem 0.25rem 0;
+      padding:0.5rem 0.25rem 0.4rem;
       text-align:center;
     }
     .send-email{

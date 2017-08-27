@@ -14,15 +14,22 @@
     </tab-container>
     <tabbar class="bar-bottom" v-model="active" >
         <tab-item  id="tab1">
-            <img slot="icon" src="./assets/map.png">        
+            <img slot="icon" v-if='active!="tab1"' src="./assets/field.png">
+            <img slot="icon" v-if='active=="tab1"' src="./assets/field-active.png">
             圈地
         </tab-item>
         <tab-item id="tab2">
-            <img slot="icon" src="./assets/land.png">        
-            已测土地 <mt-badge type="success">{{fieldCount}}</mt-badge>
+            <div slot="icon" class="icon-box">
+              <mt-badge class="badage" type="primary">{{fieldCount}}</mt-badge>
+                <img  v-if='active!="tab2"' src="./assets/field-list.png">        
+                <img  v-if='active=="tab2"' src="./assets/field-list-active.png">        
+              
+            </div>
+            已测土地
         </tab-item>
         <tab-item  id="tab3">
-            <img slot="icon" src="./assets/question.png">       
+            <img slot="icon" v-if='active!="tab3"' src="./assets/teach.png">       
+            <img slot="icon" v-if='active=="tab3"' src="./assets/teach-active.png">       
             快速教程
         </tab-item>              
     </tabbar> 
@@ -121,79 +128,95 @@ export default {
   }
 }
 </script>
-
-<style lang="less">
-.popup-tips{
-  z-index: 2005;
-}
-html,body{
-  font-size:20px;
-  width: 100%;
-  height: 100%;
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  position: fixed;
-}
-
-div{
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-p{
-  padding:0;
-  margin:0;
-}
-.clear{
-  &:before,&:after{
-        content:"";
-        display: block;
-        clear: both;
-        width:0;
-        height:0;    
+<style lang="less" >
+  .popup-tips{
+    z-index: 2005;
   }
-}
-
-.teach-tips{
-    text-align: center;
-    margin-top: 13.0rem;
-    color: gray;
-    font-size:0.7rem;
-}
-
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
-  width: 100%;
-  height: 100%;
-  .bar-bottom{
-    height:3rem;
+  html,body{
+    font-size:20px;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    position: fixed;
   }
-  .tab-container{
-    width:100%;
-    height:100%;
-    .mint-tab-container-wrap{
-      padding-bottom: 2.8rem;
+
+  div{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  p{
+    padding:0;
+    margin:0;
+  }
+  .clear{
+    &::before,&::after{
+          content:"";
+          display: block;
+          clear: both;
+          width:0;
+          height:0;    
+    }
+  }
+
+  .teach-tips{
+      text-align: center;
+      margin-top: 13.0rem;
+      color: gray;
+      font-size:0.7rem;
+  }
+  .mint-tab-item-icon{
+  }
+  .icon-box{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    .badage{
+      right: 0;
+      top: 0;
+      margin-right: -0.80rem;
+      font-size: 0.5rem;
+      margin-top: -0.2rem;
+      position: absolute;
+      padding:;
+    }
+    img{
+      max-height: 100%;
+    }
+  }
+
+  #app {
+    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+    color: #2c3e50;
+    width: 100%;
+    height: 100%;
+    .bar-bottom{
+    }
+    .tab-container{
       width:100%;
       height:100%;
-      box-sizing:border-box;
-      .tab-item{
+      .mint-tab-container-wrap{
+        padding-bottom: 2.8rem;
         width:100%;
         height:100%;
+        box-sizing:border-box;
+        .tab-item{
+          width:100%;
+          height:100%;
 
-        &.choose-field{
-          border-bottom: 0;
+          &.choose-field{
+            border-bottom: 0;
+          }
         }
       }
     }
   }
-}
-/* 隐藏站长统计字样 */
-#cnzz_stat_icon_1263557514{
-  display:none;
-}
+
+  /* 隐藏站长统计字样 */
+  #cnzz_stat_icon_1263557514{
+    display:none;
+  }
 </style>
