@@ -6,10 +6,8 @@
       v-model="popupVisible"
       popup-transition="popup-fade">  
         <div class="popup-content">
-            <div class="title">填写手机号</div>
-            <div class="tips">免责声明：本报告存在一定误差，不应被用于任何对准确性要
-求较高的用途，也不作为任何与土地面积有关的事务的依据
-</div>
+            <div class="title">请填写手机号</div>
+            <div class="tips">免责声明：本工具存在一定误差，不应被用于任何对准确性要求较高的用途，也不作为任何与土地面积有关的事务的依据</div>
             <!-- <field label="姓名" placeholder="必填" v-model="user.name"></field> -->
 <!--             <div class="sex-box clear">
                 性别
@@ -21,7 +19,7 @@
             </div> -->
             <field label="手机号"  :attr="{ maxlength: 11}"  placeholder="必填" type="tel" v-model="user.phone"></field>      
             <!-- <field label="邮箱" :state="emailState" placeholder="必填" type="email" v-model="user.email"></field>  -->
-            <mt-button @click.native="saveUserInfo" size="large" type="primary">同意并开始圈地</mt-button>
+            <mt-button @click.native="saveUserInfo" size="large" type="primary">了解并开始圈地</mt-button>
         </div>  
     </popup>
 </template>

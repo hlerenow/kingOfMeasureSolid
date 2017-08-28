@@ -66,7 +66,7 @@ export default {
 	},
 	methods:{
 		delField () {
-		MessageBox.alert('删除土地 ' + this.field.fieldName + '?').then(action => {
+		MessageBox.confirm ('删除土地 ' + this.field.fieldName + '?').then(action => {
 			this.$bus.$emit("delField",this.field)
 		});			
 		}
@@ -153,7 +153,7 @@ export default {
 			}
 		}
 		.blur-img{
-			width:1.5rem;
+			width:1rem;
 			height:0.75rem;
 
 		}

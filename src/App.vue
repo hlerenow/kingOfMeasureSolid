@@ -9,7 +9,7 @@
         <field-list-page :visable="active=='tab2'"></field-list-page>
       </tab-container-item>
       <tab-container-item id="tab3" class="tab-item"  >
-        <teach></teach>
+        <teach  :visable="active=='tab3'"></teach>
       </tab-container-item>
     </tab-container>
     <tabbar class="bar-bottom" v-model="active" >
@@ -106,11 +106,16 @@ export default {
       })
     },
     wxShare () {
-      wx.onMenuShareAppMessage({
-          title: '测地王', // 分享标题
-          desc: '想测更多的地吗？', // 分享描述
-          link: 'http://dev.yeegen.com/king', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-          imgUrl: 'http://dev.yeegen.com/king/static/logo.jpg', // 分享图标
+      let title = '测地王'
+      let desrc = '快使用易耕云作测地王，看看你家的土地有多大吧！'
+      let logoUrl = 'http://dev.yeegen.com/king/static/logo.png'
+      let link = 'http://dev.yeegen.com/king'
+
+      let option = {
+          title: title, // 分享标题
+          desc: desrc, // 分享描述
+          link: link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+          imgUrl: logoUrl, // 分享图标
           type: 'link', // 分享类型,music、video或link，不填默认为link
           dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
           success: function () { 
@@ -120,7 +125,17 @@ export default {
           cancel: function () { 
               // 用户取消分享后执行的回调函数
           }
-      });      
+      }
+
+      wx.onMenuShareWeibo(option)
+      
+      wx.onMenuShareAppMessage(option)
+
+      wx.onMenuShareTimeline(option)
+
+      wx.onMenuShareQQ(option)
+
+      wx.onMenuShareQZone(option)
     }
   },
   filters:{
@@ -189,6 +204,7 @@ export default {
   }
 
   #app {
+    background-color:white;
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
     color: #2c3e50;
     width: 100%;
