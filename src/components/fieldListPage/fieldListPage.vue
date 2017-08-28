@@ -96,6 +96,8 @@ export default {
 
       this.fieldList = tempList 
       this.reStoreFieldAll(tempList)
+      this.$bus.$emit("field-count",tempList.length);   
+      
     })
     /* 回显本地存储的土地数据 */
     var temp = [];
