@@ -166,7 +166,8 @@ export default {
 
       try {
         var res = await http.post("http://app.yeegen.com:5551/user/register", {
-          "name": this.username,
+          "username": this.username,
+          "nickname":this.username,
           "password": this.username,
           "phone": this.username,
           "email": "yeegen@qq.com",
