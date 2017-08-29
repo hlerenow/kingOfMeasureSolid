@@ -258,7 +258,7 @@ export default {
       font-size: 0.7rem;
     }
     .register-btn{
-      font-size:0.7rem;
+      font-size:1rem;
       border-radius:0;
     }
     .space{

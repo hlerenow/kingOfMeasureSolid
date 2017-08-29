@@ -89,6 +89,9 @@ export default {
       }
     }
   },
+  beforeDestory () {
+    this.map.remove()
+  },
   methods:{
   	...util,
     initMap(){

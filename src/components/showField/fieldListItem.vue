@@ -43,7 +43,7 @@ export default {
 			if (val >= 10000) {
 				return '<span  class="big-num" >'+(val / 10000).toFixed(2)+'</span><span class="unit">公顷</span>';
 			} else {
-				return '<span  class="big-num" >'+(val / 10000).toFixed(2)+'</span><span class="unit">平方米</span>';
+				return '<span  class="big-num" >'+(val).toFixed(2)+'</span><span class="unit">平方米</span>';
 			}
 		}		
 	},
@@ -66,9 +66,9 @@ export default {
 	},
 	methods:{
 		delField () {
-		MessageBox.confirm ('删除土地 ' + this.field.fieldName + '?').then(action => {
-			this.$bus.$emit("delField",this.field)
-		});			
+			MessageBox.confirm ('删除土地 ' + this.field.fieldName + '?').then(action => {
+				this.$bus.$emit("delField",this.field)
+			});			
 		}
 	}
 };
