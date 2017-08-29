@@ -10,6 +10,7 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "axios": "^0.16.2",
     "eviltransform": "^0.2.2",
     "leaflet": "1.0.3",
     "mint-ui": "^2.2.9",

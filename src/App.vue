@@ -37,6 +37,7 @@
 </template>
 
 <script>
+import axios from "axios"
 import LMapEditorMobile from '@/components/LMapEditorMobile/LMapEditorMobile'
 import showField from '@/components/showField/showField'
 import userInfo from '@/components/userInfo/userInfo'
@@ -79,9 +80,13 @@ export default {
     async wxShareConfig () {
       let res = ''
       try {
-        res = await http.get('http://dev.yeegen.com/api/signature')
-        res = JSON.parse(res)
+        res = await axios.post('http://dev.yeegen.com/api/signature',{
+          url:window.location.href
+        })
+
+        res = res.data
       } catch (e) {
+        console.log(e)
         return
       }
 
