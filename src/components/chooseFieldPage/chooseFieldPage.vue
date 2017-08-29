@@ -134,7 +134,9 @@ export default {
 			}
 
 			/*计算面积*/
-			this.area = util.calculateArea(this.bounds[0].bounds);
+      let tempBounds = [].concat(this.bounds[0].bounds)
+      tempBounds = tempBounds.concat([tempBounds[0]])
+			this.area = util.calculateArea(tempBounds);
 			this.showArea=true;
 			this.showComeBack=true;
 
