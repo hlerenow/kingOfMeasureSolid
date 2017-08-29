@@ -5,14 +5,14 @@
     	<field-list-item @click.native="selectItem(item)" :visable="visable"  :index="index" :field="item" :key="item.timestamp"></field-list-item>
     </div>
     <div class="instruct" v-show="fieldList.length>0">
-          <span class="big people">您</span>所拥有的土地总面积为<span class="area big">{{totalArea | area }}公顷</span>，已击败全国<span class="percent big">{{totalArea | level}}</span>的用户。
+          <span class="big people">您</span>所拥有的土地总面积为<span class="area big">{{totalArea | area }}公顷</span>，已击败全国<span class="percent big">{{totalArea | level}}</span>的用户<br>
           还想知道温度？降雨？产量预估？         
     </div>
     <div class="space">
     </div>
 		<div class="no-field" v-show="fieldList.length==0">暂无已测量土地<br>请去圈地页面添加土地</div>
     <div class="register">
-      <p class="tips">如果想了解更多关于土地的信息，请移步到 <a href="http://app.yeegen.com">云景</a></p>
+      <p class="tips">如果想了解更多关于土地的信息，请注册云景</p>
       <field label="用户名" v-model="username">
       </field>
       <mt-button @click.native="register" size="large" class="register-btn" type="primary">一键注册云景</mt-button>

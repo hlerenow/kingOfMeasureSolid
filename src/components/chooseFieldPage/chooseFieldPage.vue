@@ -11,7 +11,7 @@
             <div class="map-wrap">
 	       		<show-field :visable="popupVisible" :fields="bounds"></show-field>
             </div>
-            <field label="土地名称" :state="nameState" placeholder="必填" v-model="fieldName"></field>
+            <!-- <field label="土地名称" :state="nameState" placeholder="必填" v-model="fieldName"></field> -->
             <field label="作物"  :state="cropState" placeholder="必填" type="email" v-model="crop"></field> 
             <div class="field-area" v-if="showArea">
             	<span class="label">土地面积</span> <span class="data"> {{area | formatArea}}</span>
@@ -114,12 +114,12 @@ export default {
 			/*将数据发送到服务器*/
 			/*成功后就可进入 圈地界面*/
 			/*数据校验*/
-			if(this.fieldName==""){
-				this.nameState="error";
-				return ;
-			}else{
-				this.nameState="success";
-			}
+			// if(this.fieldName==""){
+			// 	this.nameState="error";
+			// 	return ;
+			// }else{
+			// 	this.nameState="success";
+			// }
 
 			if(this.crop==""){
 				this.cropState="error";
@@ -129,7 +129,7 @@ export default {
 			}	
 						
 
-			if(!(this.nameState=="success"&&this.cropState=="success")){
+			if(!this.cropState=="success"){
 				return;
 			}
 
@@ -150,7 +150,7 @@ export default {
 				email:userInfo.email,
 				phone:userInfo.phone,
 				crop:this.crop,
-				fieldName:this.fieldName,
+				fieldName:this.fieldName || '',
 				area:this.area
 			});
 	

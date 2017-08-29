@@ -10,7 +10,7 @@
 			</div>
 			<div class="field-detail-info">
 				<p class="area-line">面积： <span v-html='formatArea'></span></p>
-				<p>土地名： {{field.fieldName}}</p>
+				<!-- <p>土地名： {{field.fieldName}}</p> -->
 				<p>作物： {{field.crop}}</p>
 				<div class="more-info first ">
 					<div class="no-data float-left">温度：<img class="blur-img" src="../../assets/blur-number.jpg" /></div>

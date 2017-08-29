@@ -168,6 +168,7 @@ export default {
         font-size:0.6rem;
         color:gray;
         text-align:center;
+        padding-bottom: 30px;
       }
       .sex-box{
         font-size:0.8rem;

@@ -96,7 +96,6 @@ export default {
   	...util,
     initMap(){
       /*注册事件 */
-
       this.$bus.$on("reChoose",()=>{
         this.reset();
       });

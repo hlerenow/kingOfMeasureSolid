@@ -200,7 +200,7 @@ export default {
 			overflow-y: auto;
 
 			li{
-				padding:0.25rem 0.5rem;
+				padding:0.5rem 0.5rem;
 				font-size:0.7rem;
 				border-bottom: 1px solid #eee;
 			}
@@ -210,5 +210,11 @@ export default {
 			text-align:center;
 			padding:1rem 0;
 		}
+	}
+</style>
+
+<style type="text/css">
+	.mint-msgbox-confirm,.mint-msgbox-cancel{
+		font-size: 18px;
 	}
 </style>
