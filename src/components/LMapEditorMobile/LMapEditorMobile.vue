@@ -196,6 +196,7 @@ export default {
 
           res.push(handle);
 
+          /* 绘制第一条线时 */
           if (points.length==2&&i==1) {
 
             let _opt = {
@@ -204,9 +205,15 @@ export default {
               color: '#fff',
               lineCap: 'square',
             };
-
-            let line = L.polyline([points[i - 1], points[i]], _opt).addTo(this.map);
-
+            let pt1 = L.latLng(points[i - 1]);
+            let pt2 = L.latLng(points[i]);
+            let distance = this.map.distance(pt1, pt2);
+            console.log(distance);
+            let line = L.polyline([points[i - 1], points[i]], _opt);
+            line.addTo(this.map)
+            
+            line.bindTooltip(`两点相距: ${distance.toFixed(2)} 米`,{permanent: true, className:'distance-tips'}).openTooltip();
+            
             res.push(line);
           }
       }

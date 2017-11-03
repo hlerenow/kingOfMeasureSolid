@@ -83,7 +83,6 @@ export default {
         res = await axios.post('http://dev.yeegen.com/api/signature',{
           url:window.location.href
         })
-
         res = res.data
       } catch (e) {
         console.log(e)

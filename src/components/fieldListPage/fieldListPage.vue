@@ -12,10 +12,8 @@
     </div>
 		<div class="no-field" v-show="fieldList.length==0">暂无已测量土地<br>请去圈地页面添加土地</div>
     <div class="register">
-      <p class="tips">如果想了解更多关于土地的信息，请注册云景</p>
-      <field label="用户名" v-model="username">
-      </field>
-      <mt-button @click.native="register" size="large" class="register-btn" type="primary">一键注册云景</mt-button>
+      <p class="tips">如果想了解更多关于土地的信息，请下载云景安卓APP, 申请体验</p>
+      <mt-button @click.native="register" size="large" class="register-btn" type="primary">一键下载云景</mt-button>
     </div> 
 	</div>
 </template>
@@ -152,38 +150,9 @@ export default {
       this.fieldDetailVisable=true;
     },
     /*提交注册申请*/
-    async register(){
+    register(){
 
-      let user = JSON.parse( localStorage.getItem("user")) || {}
-      user.phone = this.username
-
-      localStorage.setItem("user",JSON.stringify(user));
-
-      /*cnzz  统计*/
-      window._czc.push(["_trackEvent","侧地王注册","注册","列表页",this.username]);
-
-      /*暂不提交申请记录*/
-
-      // return;
-
-      try {
-        var res = await http.post("http://app.yeegen.com:5551/user/register", {
-          "username": this.username,
-          "nickname":this.username,
-          "password": this.username,
-          "phone": this.username,
-          "email": "yeegen@qq.com",
-          "region": "- - -", // 省 市 县
-          "crop": "-",
-          "source":"测地王"
-        });
-
-        /*提示用户 注册申请已提交，稍后会有工作人员与您联系，请保持手机的畅通*/
-          MessageBox('提示', '注册申请已提交，稍后会有工作人员与您联系，请保持手机的畅通');    
-      } catch (e) {
-        console.log(e);
-          MessageBox('提示', '注册申请提交失败，请稍后再试');    
-      };      
+      window.location.href = 'http://openbox.mobilem.360.cn/index/d/sid/3905006';
     }
   },
   filters:{
