@@ -152,7 +152,7 @@ export default {
     /*提交注册申请*/
     register(){
 
-      window.location.href = 'http://openbox.mobilem.360.cn/index/d/sid/3905006';
+      window.location.href = 'http://oy7rf5hho.bkt.clouddn.com/yunjing-1.0.1.apk';
     }
   },
   filters:{
